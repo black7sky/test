@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
+	debug="false">
+
+
+	<!--输出方式：输出到控制台-->
+	<appender name="Console" class="org.apache.log4j.ConsoleAppender">
+		<!--   
+			设置通道名称和输出方式，其中输出方式appender有5种,分别为  
+			org.apache.log4j.RollingFileAppender      
+			org.apache.log4j.ConsoleAppender (控制台)  
+			org.apache.log4j.FileAppender (文件)     
+			org.apache.log4j.DailyRollingFileAppender (每天产生一个日志文件)     
+			org.apache.log4j.WriterAppender (将日志信息以流格式发送到指定地方)  
+		-->
+		<param name="Target" value="System.out" />
+		<param name="Threshold" value="INFO" />
+		<!-- 
+			Threshold是个全局的过滤器，他将把低于所设置的level的信息过滤不显示出来 
+		-->
+
+		<!-- 设置日志输出的格式-->
+		<layout class="org.apache.log4j.PatternLayout">
+
+			<!--   
+				参数都以%开始后面不同的参数代表不同的格式化信息：     
+				%c  输出所属类的全名，可在修改为 %d{Num} ,Num类名输出的范围  
+				如："org.apache.elathen.ClassName",%C{2} 将输出elathen.ClassName      
+				
+				%d  输出日志时间其格式为 %d{yyyy-MM-dd HH:mm:ss,SSS}，可指定格式 如 %d{HH:mm:ss}     
+				
+				%l  输出日志事件发生位置，包括类目名、发生线程，在代码中的行数    
+				
+				%n  换行符     
+				
+				%m  输出代码指定信息，如info(“message”),输出message     
+				
+				%p  输出优先级，即 FATAL ,ERROR 等     
+				
+				%r  输出从启动到显示该log信息所耗费的毫秒数     
+				
+				%t  输出产生该日志事件的线程名-->
+
+			<!-- The default pattern: Date Priority [Category] Message\n -->
+			<param name="ConversionPattern"
+				value="%d{ABSOLUTE} %p [%l] %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="RollingLogFileAppender"
+		class="org.apache.log4j.RollingFileAppender">
+
+		<!--日志文件名 -->
+		<param name="File" value="/home/imcc/logs/weChatPay/log.log" />
+
+		<param name="Threshold" value="INFO" />
+
+		<!--不追加到原文件 -->
+		<param name="Append" value="false" />
+
+		<!--最大变换数量，-1 为不限制-->
+		<param name="MaxBackupIndex" value="50" />
+
+		<!--最大文件大小 -->
+		<param name="MaxFileSize" value="10MB" />
+
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d{ABSOLUTE} %p [%l] -%m%n" />
+		</layout>
+	</appender>
+	
+	<appender name="RollingLogFileAppender1"
+		class="org.apache.log4j.RollingFileAppender">
+
+		<!--日志文件名 -->
+		<param name="File" value="/home/imcc/logs/weChatPay/log_lu48.log" />
+
+		<param name="Threshold" value="INFO" />
+
+		<!--不追加到原文件 -->
+		<param name="Append" value="false" />
+
+		<!--最大变换数量，-1 为不限制-->
+		<param name="MaxBackupIndex" value="50" />
+
+		<!--最大文件大小 -->
+		<param name="MaxFileSize" value="10MB" />
+
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d{ABSOLUTE} %p [%l] -%m%n" />
+		</layout>
+	</appender>
+
+	<!-- 输出到日志文件 每天一个日志  -->   
+    <appender name="filelog_daily" class="org.apache.log4j.DailyRollingFileAppender">      
+        <param name="File" value="/home/imcc/logs/weChatPay/imcc.log" />      
+        <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />  
+        <layout class="org.apache.log4j.PatternLayout">      
+            <param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss\} %-5p] [%t] (%c:%L) - %m%n" />      
+        </layout>      
+    </appender> 
+    
+	<!--  
+		level: 是日记记录的优先级，优先级由高到低分为      
+		OFF ,FATAL ,ERROR ,WARN ,INFO ,DEBUG ,ALL。     
+		Log4j 建议只使用FATAL ,ERROR ,WARN ,INFO ,DEBUG这四个级别。  
+	-->
+
+	<!-- 指定logger的设置，additivity指示是否叠加输出log，如果是false，  
+		在 DsErrorLog logger中日志不会被其它logger满足条件的logger(比如root)     
+		输出     
+	-->
+	<!-- 将名称为DSErrorLog的logger，输出到“EEROR_LOG”的appender     
+		所谓logger的名字也就是，在定义Logger时，构造函数的参数     
+		Logger log = Logger.getLogger("DSErrorLog");     
+	-->
+	<logger name="faq" additivity="false">
+		<level class="org.apache.log4j.Level" value="INFO" />
+		<appender-ref ref="Console" />
+		<appender-ref ref="RollingLogFileAppender" />
+	</logger>
+
+	<logger name="common" additivity="false">
+		<level class="org.apache.log4j.Level" value="INFO" />
+		<appender-ref ref="Console" />
+		<appender-ref ref="RollingLogFileAppender" />
+	</logger>
+
+    <logger name="lu48" additivity="false">
+		<level class="org.apache.log4j.Level" value="INFO" />
+		<appender-ref ref="Console" />
+		<appender-ref ref="RollingLogFileAppender1" />
+	</logger>
+	<!--  
+		输出指定类包中的日志，比如想输出     
+		Hibernate运行中生成的SQL语句，可作如下设置     
+	-->
+	<category name="org.hibernate.SQL">
+		<priority value="INFO" />
+	</category>
+
+	<category name="org.springframework">
+		<priority value="WARN" />
+	</category>
+
+<!-- 
+	<category name="org.apache.solr">
+		<priority value="DEBUG" />
+	</category>
+ -->
+	<!--  
+		根默认会自动构建一个 root,输出INFO级别的日志到控制台，供logger继承 
+	
+	<root>
+		<priority value="WARN" />
+		<appender-ref ref="Console" />
+		<appender-ref ref="RollingLogFileAppender" />
+	</root>-->
+	<root>
+		<priority value="INFO" />
+		<appender-ref ref="Console" />
+		<appender-ref ref="filelog_daily" />
+	</root>
+</log4j:configuration>
